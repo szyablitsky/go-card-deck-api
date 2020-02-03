@@ -11,5 +11,6 @@ func main()  {
 	r := mux.NewRouter()
 	r.HandleFunc("/decks", handlers.CreateDeckHandler).Methods(http.MethodPost)
 	r.HandleFunc("/decks/{id}", handlers.OpenDeckHandler).Methods(http.MethodGet)
+	r.HandleFunc("/decks/{id}/draw", handlers.DrawCardsHandler).Methods(http.MethodPost)
 	log.Fatal(http.ListenAndServe(":8080", r))
 }

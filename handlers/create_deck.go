@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"encoding/json"
-	"github.com/gorilla/mux"
 	"github.com/szyablitsky/go-card-deck-api/decorators"
 	"github.com/szyablitsky/go-card-deck-api/repository"
 	"net/http"
@@ -26,15 +25,8 @@ func CreateDeckHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	deck := repository.CreateDeck(params.Shuffled)
-	deckDecorator := decorators.NewCreateDeckDecorator(deck)
+	decorator := decorators.NewCreateDeckDecorator(deck)
 
-	w.WriteHeader(http.StatusOK)
-	_ = json.NewEncoder(w).Encode(deckDecorator)
-}
-
-func OpenDeckHandler(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-
-	vars := mux.Vars(r)
-	id := vars["id"]
+	w.WriteHeader(http.StatusCreated)
+	_ = json.NewEncoder(w).Encode(decorator)
 }
