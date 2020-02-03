@@ -1,6 +1,8 @@
 package decorators
 
-import "github.com/szyablitsky/go-card-deck-api/models"
+import (
+	"github.com/szyablitsky/go-card-deck-api/models"
+)
 
 type CreateDeckDecorator struct {
 	DeckId    string `json:"deck_id"`

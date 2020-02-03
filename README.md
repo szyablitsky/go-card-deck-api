@@ -1,4 +1,7 @@
 # go-card-deck-api
 
-This is sample Golang API server
+Sample Golang API server
+
+Build and install by typing `go install` in a shell.
+
  

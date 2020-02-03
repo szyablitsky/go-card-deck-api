@@ -56,7 +56,7 @@ func DrawCards(id string, count int) (*models.Deck, *drawError) {
 	}
 
 	mux.Lock()
-	deck.DrawCount -= count
+	deck.DrawCount += count
 	mux.Unlock()
 
 	return deck, nil
