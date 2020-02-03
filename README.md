@@ -2,6 +2,8 @@
 
 Sample Golang API server
 
-Build and install by typing `go install` in a shell.
+To build and install use `go install`
 
- 
+Start server by typing `go-card-deck-api`
+
+Run tests with `go test ./...`
