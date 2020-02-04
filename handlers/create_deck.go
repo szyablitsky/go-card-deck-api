@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/szyablitsky/go-card-deck-api/decorators"
 	"github.com/szyablitsky/go-card-deck-api/repository"
 	"net/http"
@@ -24,7 +25,14 @@ func CreateDeckHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	deck := repository.CreateDeck(params.Shuffled)
+	deck, err := repository.CreateDeck(params.Shuffled, params.Cards)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		str := fmt.Sprintf(`{"error": %q}`, err.Error())
+		_, _ = w.Write([]byte(str))
+		return
+	}
+
 	decorator := decorators.NewCreateDeckDecorator(deck)
 
 	w.WriteHeader(http.StatusCreated)

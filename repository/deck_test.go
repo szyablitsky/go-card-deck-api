@@ -7,7 +7,7 @@ import (
 
 func TestCreateDeck(t *testing.T) {
 	wantShuffled := true
-	deck := CreateDeck(wantShuffled)
+	deck, _ := CreateDeck(wantShuffled, []string{})
 
 	if deck.DrawCount != 0 {
 		t.Errorf("CreateDeck().Shuffled == 0, got %d", deck.DrawCount)

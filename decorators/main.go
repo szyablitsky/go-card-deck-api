@@ -1,7 +1,7 @@
 package decorators
 
 import (
-	"github.com/szyablitsky/go-card-deck-api/models"
+	"github.com/szyablitsky/go-card-deck-api/repository"
 )
 
 type CreateDeckDecorator struct {
@@ -10,7 +10,7 @@ type CreateDeckDecorator struct {
 	Remaining int    `json:"remaining"`
 }
 
-func NewCreateDeckDecorator(deck models.Deck) (decorator CreateDeckDecorator) {
+func NewCreateDeckDecorator(deck *repository.Deck) (decorator CreateDeckDecorator) {
 	decorator.DeckId = deck.Id
 	decorator.Shuffled = deck.Shuffled
 	decorator.Remaining = len(deck.Cards) - deck.DrawCount
@@ -18,25 +18,25 @@ func NewCreateDeckDecorator(deck models.Deck) (decorator CreateDeckDecorator) {
 }
 
 type OpenDeckDecorator struct {
-	DeckId    string        `json:"deck_id"`
-	Shuffled  bool          `json:"shuffled"`
-	Remaining int           `json:"remaining"`
-	Cards     []models.Card `json:"cards"`
+	DeckId    string          `json:"deck_id"`
+	Shuffled  bool            `json:"shuffled"`
+	Remaining int             `json:"remaining"`
+	Cards     []CardDecorator `json:"cards"`
 }
 
-func NewOpenDeckDecorator(deck *models.Deck) (decorator OpenDeckDecorator) {
+func NewOpenDeckDecorator(deck *repository.Deck) (decorator OpenDeckDecorator) {
 	decorator.DeckId = deck.Id
 	decorator.Shuffled = deck.Shuffled
 	decorator.Remaining = len(deck.Cards) - deck.DrawCount
-	decorator.Cards = deck.Cards[deck.DrawCount:]
+	decorator.Cards = NewCardsDecorator(deck.Cards[deck.DrawCount:])
 	return
 }
 
 type DrawCardsDecorator struct {
-	Cards []models.Card `json:"cards"`
+	Cards []CardDecorator `json:"cards"`
 }
 
-func NewDrawCardsDecorator(deck *models.Deck, count int) (decorator DrawCardsDecorator) {
-	decorator.Cards = deck.Cards[deck.DrawCount-count : deck.DrawCount]
+func NewDrawCardsDecorator(deck *repository.Deck, count int) (decorator DrawCardsDecorator) {
+	decorator.Cards = NewCardsDecorator(deck.Cards[deck.DrawCount-count : deck.DrawCount])
 	return
 }

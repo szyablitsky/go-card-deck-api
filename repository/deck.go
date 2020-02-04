@@ -1,33 +1,45 @@
 package repository
 
 import (
+	"errors"
 	"fmt"
 	"github.com/satori/go.uuid"
-	"github.com/szyablitsky/go-card-deck-api/models"
 	"net/http"
 	"sync"
 )
 
+type Deck struct {
+	Id        string
+	Shuffled  bool
+	Cards
+	DrawCount int
+}
+
 // in memory repository
 // can be changed to database storage if needed
-var decks = make(map[string]*models.Deck)
+var decks = make(map[string]*Deck)
 var mux = sync.Mutex{}
 
-func CreateDeck(shuffled bool) models.Deck {
+func CreateDeck(shuffled bool, cards []string) (*Deck, error) {
+	if len(cards) != 0 && !ValidateCards(cards) {
+		return nil, errors.New("invalid cards list")
+	}
+
 	id := fmt.Sprint(uuid.NewV4())
 
-	deck := models.Deck{
+	deck := Deck{
 		Id:       id,
 		Shuffled: shuffled,
-		Cards:    CreateCards(shuffled),
+		Cards:    CreateCards(shuffled, cards),
 	}
 
 	decks[id] = &deck
 
-	return deck
+	return &deck, nil
 }
 
-func OpenDeck(id string) (*models.Deck, bool) {
+
+func OpenDeck(id string) (*Deck, bool) {
 	deck, present := decks[id]
 	return deck, present
 }
@@ -45,7 +57,7 @@ func (e *drawError) Status() int {
 	return e.status
 }
 
-func DrawCards(id string, count int) (*models.Deck, *drawError) {
+func DrawCards(id string, count int) (*Deck, *drawError) {
 	deck, present := OpenDeck(id)
 	if !present {
 		return deck, &drawError{http.StatusNotFound, "Deck not found"}
