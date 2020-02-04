@@ -21,3 +21,26 @@ func TestCreateDeck(t *testing.T) {
 		t.Errorf("CreateDeck().Id should be valid UUID, error %v", err)
 	}
 }
+
+func TestOpenDeck(t *testing.T) {
+	id := "id"
+	want := &Deck{}
+	decks[id] = want
+
+	got, present := OpenDeck(id)
+	if got != want {
+		t.Errorf("OpenDeck(%q) == %v, got %v", id, want, got)
+	}
+	if !present {
+		t.Errorf("OpenDeck(%q) shuld be present", id)
+	}
+
+	wrongId := "wrong"
+	got, present = OpenDeck(wrongId)
+	if got != nil {
+		t.Errorf("OpenDeck(%q) == %v, got %v", wrongId, nil, got)
+	}
+	if present {
+		t.Errorf("OpenDeck(%q) shuld be absent", wrongId)
+	}
+}
