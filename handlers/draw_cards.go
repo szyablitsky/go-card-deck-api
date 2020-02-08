@@ -14,8 +14,6 @@ type drawCardsParams struct {
 }
 
 func DrawCardsHandler(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-
 	vars := mux.Vars(r)
 	id := vars["id"]
 
@@ -23,8 +21,8 @@ func DrawCardsHandler(w http.ResponseWriter, r *http.Request) {
 	var params drawCardsParams
 	err := decoder.Decode(&params)
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		_, _ = w.Write([]byte(`{"error": "This API endpoint should be called with 'count' param"}`))
+		message := "This API endpoint should be called with 'count' param"
+		respondWithError(w, http.StatusBadRequest, message)
 		return
 	}
 
@@ -32,14 +30,10 @@ func DrawCardsHandler(w http.ResponseWriter, r *http.Request) {
 
 	deck, drawErr := repository.DrawCards(id, params.Count)
 	if drawErr != nil {
-		w.WriteHeader(drawErr.Status())
-		str := fmt.Sprintf(`{"error": %q}`, drawErr.Error())
-		_, _ = w.Write([]byte(str))
+		respondWithError(w, drawErr.Status(), drawErr.Error())
 		return
 	}
 
 	decorator := decorators.NewDrawCardsDecorator(deck, params.Count)
-
-	w.WriteHeader(http.StatusOK)
-	_ = json.NewEncoder(w).Encode(decorator)
+	respondWithJSON(w, http.StatusOK, decorator)
 }

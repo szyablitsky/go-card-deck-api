@@ -9,8 +9,8 @@ import (
 )
 
 type Deck struct {
-	Id        string
-	Shuffled  bool
+	Id       string
+	Shuffled bool
 	Cards
 	DrawCount int
 }
@@ -19,6 +19,14 @@ type Deck struct {
 // can be changed to database storage if needed
 var decks = make(map[string]*Deck)
 var mux = sync.Mutex{}
+
+func GetDecks() (slice []*Deck) {
+	slice = make([]*Deck, 0, len(decks))
+	for _, value := range decks {
+		slice = append(slice, value)
+	}
+	return
+}
 
 func CreateDeck(shuffled bool, cards []string) (*Deck, error) {
 	if len(cards) != 0 && !ValidateCards(cards) {
@@ -37,7 +45,6 @@ func CreateDeck(shuffled bool, cards []string) (*Deck, error) {
 
 	return &deck, nil
 }
-
 
 func OpenDeck(id string) (*Deck, bool) {
 	deck, present := decks[id]
