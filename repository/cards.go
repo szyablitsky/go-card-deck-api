@@ -26,7 +26,8 @@ func ValidateCards(cards Cards) bool {
 
 func CreateCards(shuffled bool, cards Cards) Cards {
 	if len(cards) == 0 {
-		cards = FullDeckCodes[:]
+		copy := FullDeckCodes
+		cards = copy[:]
 	}
 
 	if shuffled {
